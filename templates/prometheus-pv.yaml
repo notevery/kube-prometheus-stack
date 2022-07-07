@@ -12,7 +12,7 @@ spec:
   capacity:
     storage: 20Gi
   local:
-    path: /data/promethous
+    path: /data/prometheus
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -23,4 +23,4 @@ spec:
           - arkos-master01
   persistentVolumeReclaimPolicy: Delete
   storageClassName: prometheus
-  volumeMode: Filesystem  
+  volumeMode: Filesystem
