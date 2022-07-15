@@ -74,7 +74,8 @@ livenessProbe:
 
 image:
   repository: grafana/grafana
-  tag: 8.5.0
+  # Overrides the Grafana image tag whose default is the chart appVersion
+  tag: ""
   sha: ""
   pullPolicy: IfNotPresent
 
@@ -586,6 +587,19 @@ grafana.ini:
     mode: console
   grafana_net:
     url: https://grafana.net
+  server:
+    root_url: https://ob.longguikeji.com/
+  auth.generic_oauth:
+    enabled: true
+    name: arkid
+    allow_sign_up: false
+    client_id: HigFn1KLT1F6Ckj1Cz98lxq1CWokLwqc5iUlkg6h
+    client_secret: jHrpamLcM6juvsNPynDEL20prBXlnzbtJLOthq11nSA85diawxrChTAZVE5SJJpSnS0JgsTFtq69auJJWUEDKZCzj5hNztr3IjNftI9L8irAPt6ziXROg8XD3itZfDvt
+    scopes: email,openid,userinfo
+    auth_url: https://arkidv2.longguikeji.com/api/v1/tenant/3225c0c3-60fb-4546-a50b-58954a22d9f5/oauth/authorize/
+    token_url: https://arkidv2.longguikeji.com/api/v1/tenant/3225c0c3-60fb-4546-a50b-58954a22d9f5/oauth/token/
+    api_url: https://arkidv2.longguikeji.com/api/v1/tenant/3225c0c3-60fb-4546-a50b-58954a22d9f5/oauth/userinfo/
+    tls_skip_verify_insecure: true
 ## grafana Authentication can be enabled with the following values on grafana.ini
  # server:
       # The full public facing url you use in browser, used for redirects and emails
@@ -647,7 +661,7 @@ smtp:
 sidecar:
   image:
     repository: quay.io/kiwigrid/k8s-sidecar
-    tag: 1.15.6
+    tag: 1.19.2
     sha: ""
   imagePullPolicy: IfNotPresent
   resources: {}
@@ -863,6 +877,10 @@ networkPolicy:
   ## When true, grafana will accept connections from any source
   ## (with the correct destination port).
   ##
+  ingress: false
+  ## @param networkPolicy.ingress When true enables the creation
+  ## an ingress network policy
+  ##
   allowExternal: true
   ## @param networkPolicy.explicitNamespacesSelector A Kubernetes LabelSelector to explicitly select namespaces from which traffic could be allowed
   ## If explicitNamespacesSelector is missing or set to {}, only client Pods that are in the networkPolicy's namespace
@@ -878,10 +896,34 @@ networkPolicy:
   ##    - {key: role, operator: In, values: [frontend]}
   ##
   explicitNamespacesSelector: {}
+  ##
+  ##
+  ##
+  ##
+  ##
+  ##
+  egress:
+    ## @param networkPolicy.egress.enabled When enabled, an egress network policy will be
+    ## created allowing grafana to connect to external data sources from kubernetes cluster.
+    enabled: false
+    ##
+    ## @param networkPolicy.egress.ports Add individual ports to be allowed by the egress
+    ports: []
+    ## Add ports to the egress by specifying - port: <port number>
+    ## E.X.
+    ## ports:
+      ## - port: 80
+      ## - port: 443
+  ##
+  ##
+  ##
+  ##
+  ##
+  ##
 
 # Enable backward compatibility of kubernetes where version below 1.13 doesn't have the enableServiceLinks option
 enableKubeBackwardCompatibility: false
-
+useStatefulSet: false
 # Create a dynamic manifests via values:
 extraObjects: []
   # - apiVersion: "kubernetes-client.io/v1"
